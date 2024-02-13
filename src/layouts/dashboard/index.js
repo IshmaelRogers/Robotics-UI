@@ -20,6 +20,8 @@
 import Grid from "@mui/material/Grid";
 import Icon from "@mui/material/Icon";
 import { Card, LinearProgress, Stack } from "@mui/material";
+import React, { useState, useEffect } from 'react';
+
 
 // Vision UI Dashboard React components
 import VuiBox from "components/VuiBox";
@@ -63,6 +65,50 @@ import { barChartOptionsDashboard } from "layouts/dashboard/data/barChartOptions
 function Dashboard() {
   const { gradients } = colors;
   const { cardContent } = gradients;
+  const [apiResults, setApiResults] = useState(null);
+  const [isoTimeStart, setIsoTimeStart] = useState('');
+  const [swimSpeed, setSwimSpeed] = useState('');
+  const [departureWindowHours, setDepartureWindowHours] = useState('');
+  const [waypoints, setWaypoints] = useState([]);
+
+  // In Dashboard component
+const fetchApiData = async (params) => {
+  const isoTimeStart = `${startDate}T${startTime}:00`;
+  const requestBody = {
+    waypoints: waypoints.map(wp => ({ lat: wp.lat, lon: wp.lng })),
+    iso_time_start: isoTimeStart,
+    swim_speed: parseFloat(swimSpeed),
+    departure_window_hours: parseInt(departureWindowHours, 10),
+    route_algorithm: "current-aware",
+    ocean_model: "auto",
+  };
+
+  try {
+    const response = await fetch('http://api.current-lab.com:8000/currentroute', {
+      method: 'POST', // or 'GET', depending on your API
+      headers: {
+        'Content-Type': 'application/json',
+        'X-API-Key': 'b0a47781a2be71469886ff1df8d24a0e'
+      },
+      body: JSON.stringify(params), // if POST request
+    });
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    const data = await response.json();
+    setApiResults(data);
+  } catch (error) {
+    console.error('Failed to fetch data:', error);
+  }
+};
+
+  useEffect(() => {
+    // Placeholder for your API fetch call
+    fetchApiData().then(data => {
+      setApiResults(data); // Assume this is the data you want to share
+    });
+  }, []);
+
 
   return (
     <DashboardLayout>
@@ -72,51 +118,57 @@ function Dashboard() {
           <Grid container spacing={3}>
             <Grid item xs={12} md={6} xl={3}>
               <MiniStatisticsCard
-                title={{ text: "today's money", fontWeight: "regular" }}
-                count="$53,000"
-                percentage={{ color: "success", text: "+55%" }}
+                title={{ text: "weather info", fontWeight: "regular" }}
+                count="Wind Speed "
+                percentage={{ color: "success", text: "54 mph" }}
                 icon={{ color: "info", component: <IoWallet size="22px" color="white" /> }}
               />
             </Grid>
             <Grid item xs={12} md={6} xl={3}>
               <MiniStatisticsCard
-                title={{ text: "today's users" }}
-                count="2,300"
-                percentage={{ color: "success", text: "+3%" }}
+                title={{ text: "Calendar" }}
+                count="Today's Date "
+                percentage={{ color: "success", text: "02/18/2024" }}
                 icon={{ color: "info", component: <IoGlobe size="22px" color="white" /> }}
               />
             </Grid>
             <Grid item xs={12} md={6} xl={3}>
               <MiniStatisticsCard
-                title={{ text: "new clients" }}
-                count="+3,462"
-                percentage={{ color: "error", text: "-2%" }}
+                title={{ text: "Geographics" }}
+                count="Lat 21.439 Lon 39.814"
+               //percentage={{ color: "error", text: "-2%" }}
                 icon={{ color: "info", component: <IoDocumentText size="22px" color="white" /> }}
               />
             </Grid>
             <Grid item xs={12} md={6} xl={3}>
               <MiniStatisticsCard
-                title={{ text: "total sales" }}
-                count="$103,430"
-                percentage={{ color: "success", text: "+5%" }}
+                title={{ text: "Ocean Model" }}
+                count="Model Accuracy "
+                percentage={{ color: "success", text: "+95%" }}
                 icon={{ color: "info", component: <FaShoppingCart size="20px" color="white" /> }}
               />
             </Grid>
+            
           </Grid>
         </VuiBox>
         <VuiBox mb={3}>
           <Grid container spacing="18px">
             <Grid item xs={12} lg={12} xl={5}>
-              <WelcomeMark />
-            </Grid>
-            <Grid item xs={12} lg={6} xl={3}>
-              <SatisfactionRate />
-            </Grid>
+            <WelcomeMark setWaypoints={setWaypoints} />
+          </Grid>
+          <Grid item xs={12} lg={6} xl={3}>
+          <SatisfactionRate 
+            setIsoTimeStart={setIsoTimeStart} 
+            setSwimSpeed={setSwimSpeed} 
+            setDepartureWindowHours={setDepartureWindowHours}
+          />
+          </Grid>
             <Grid item xs={12} lg={6} xl={4}>
-              <ReferralTracking />
+              <ReferralTracking apiData={apiResults} />
             </Grid>
           </Grid>
         </VuiBox>
+        <button onClick={fetchApiData} style={{ margin: '20px' }}>Send API Request</button>
         <VuiBox mb={3}>
           <Grid container spacing={3}>
             <Grid item xs={12} lg={6} xl={7}>
@@ -284,6 +336,8 @@ function Dashboard() {
             <OrderOverview />
           </Grid>
         </Grid>
+        {/* This VuiBox contains SatisfactionRate and ReferralTracking components */}
+        
       </VuiBox>
       <Footer />
     </DashboardLayout>

@@ -1,62 +1,117 @@
-import React from "react";
+import React, {useState, useEffect,useRef} from 'react';
+import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
+import { Card } from "@mui/material";
 
-import { Card, Icon } from "@mui/material";
-import VuiBox from "components/VuiBox";
-import VuiTypography from "components/VuiTypography";
 
-import gif from "assets/images/cardimgfree.png";
+const containerStyle = {
+  width: '100%',
+  height: '540px',
+};
+
+const center = {
+  lat: 24.568229,
+  lng: -81.796759,
+};
+
+const googleMapsApiKey = "AIzaSyAcnF_4nDqKp5bkFr7VYfE-n5anAnZDYIE&libraries=geometry&callback=initMap";
+const googleMapsApiBaseUrl = 'https://maps.googleapis.com/maps/api/js';  
+
+const loadGoogleMapsScript = (callback) => {
+  const script = document.createElement('script');
+  script.src = `${googleMapsApiBaseUrl}?key=${googleMapsApiKey}&libraries=geometry&callback=${callback}`;
+  script.async = true;
+  script.defer = true;
+  document.head.appendChild(script);
+};
 
 const WelcomeMark = () => {
+  const [markers, setMarkers] = useState([]);
+  const [waypoints, setWaypoints] = useState({});
+  const [isFullScreen, setIsFullScreen] = useState(false);
+  const mapRef = useRef(null);
+
+  
+
+  const onMapClick = (event) => {
+    const newMarker = {
+      lat: event.latLng.lat(),
+      lng: event.latLng.lng(),
+      order: markers.length + 1,
+    };
+    setMarkers(current => [...current, newMarker]);
+  };
+
+  
+  useEffect(() => {
+    // Update waypoints object whenever markers array changes
+    const newWaypoints = markers.reduce((acc, marker) => {
+      acc[`waypoint${marker.order}`] = { lat: marker.lat, lng: marker.lng };
+      return acc;
+    }, {});
+    setWaypoints(newWaypoints);
+  }, [markers]);
+
+  useEffect(() => {
+    // Debugging: Log the full screen state
+    const handleFullScreenChange = () => {
+      const isMapFullScreen = document.fullscreenElement === mapRef.current;
+      console.log("Is Full Screen:", isMapFullScreen); // Debug log
+      setIsFullScreen(isMapFullScreen);
+    };
+  
+    document.addEventListener('fullscreenchange', handleFullScreenChange);
+    return () => document.removeEventListener('fullscreenchange', handleFullScreenChange);
+  }, []);
+
+  const toggleFullScreenDebug = () => setIsFullScreen(!isFullScreen); // Add this function
+
+  
+
+  // Function to remove a marker based on its order
+  const onMarkerClick = (orderToRemove) => {
+    setMarkers(current =>
+      current
+        .filter(marker => marker.order !== orderToRemove)
+        .map((marker, index) => ({ ...marker, order: index + 1 })) // Reassign order to remaining markers
+    );
+  };
+
+
+
+
   return (
-    <Card sx={() => ({
-      height: "340px",
-      py: "32px",
-      backgroundImage: `url(${gif})`,
-      backgroundSize: "cover",
-      backgroundPosition: "50%"
-    })}>
-      <VuiBox height="100%" display="flex" flexDirection="column" justifyContent="space-between">
-        <VuiBox>
-          <VuiTypography color="text" variant="button" fontWeight="regular" mb="12px">
-            Welcome back,
-          </VuiTypography>
-          <VuiTypography color="white" variant="h3" fontWeight="bold" mb="18px">
-            Mark Johnson
-          </VuiTypography>
-          <VuiTypography color="text" variant="h6" fontWeight="regular" mb="auto">
-            Glad to see you again!
-            <br /> Ask me anything.
-          </VuiTypography>
-        </VuiBox>
-        <VuiTypography
-          component="a"
-          href="#"
-          variant="button"
-          color="white"
-          fontWeight="regular"
-          sx={{
-            mr: "5px",
-            display: "inline-flex",
-            alignItems: "center",
-            cursor: "pointer",
-
-            "& .material-icons-round": {
-              fontSize: "1.125rem",
-              transform: `translate(2px, -0.5px)`,
-              transition: "transform 0.2s cubic-bezier(0.34,1.61,0.7,1.3)",
-            },
-
-            "&:hover .material-icons-round, &:focus  .material-icons-round": {
-              transform: `translate(6px, -0.5px)`,
-            },
-          }}
-        >
-          Tap to record
-          <Icon sx={{ fontWeight: "bold", ml: "5px" }}>arrow_forward</Icon>
-        </VuiTypography>
-      </VuiBox>
-    </Card>
+    <> <button onClick={toggleFullScreenDebug}>Toggle Full Screen Debug</button> {/* Temporary Button */}
+      <Card ref={mapRef} sx={{ height: "500px", py: "32px", position: "relative" }}>
+        <LoadScript googleMapsApiKey={googleMapsApiKey}>
+          <GoogleMap
+            mapContainerStyle={containerStyle}
+            center={center}
+            zoom={15}
+            onClick={onMapClick}
+          >
+            {markers.map((marker, index) => (
+              <Marker key={index} 
+                position={{ lat: marker.lat, lng: marker.lng }} 
+                label={marker.order.toString()}
+                onClick={() => onMarkerClick(marker.order)}
+              />
+            ))}
+          </GoogleMap>
+        </LoadScript>
+      </Card>
+      {isFullScreen && (
+        <input type="text" style={{
+          position: 'relative',
+          top: '10px',
+          left: '10px',
+          zIndex: 1000,
+          width: '200px',
+        }} placeholder="Enter waypoint name" />
+      )}
+    </>
   );
 };
 
 export default WelcomeMark;
+
+

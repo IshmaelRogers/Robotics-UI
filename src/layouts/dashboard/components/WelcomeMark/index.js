@@ -14,23 +14,12 @@ const center = {
 };
 
 const googleMapsApiKey = "AIzaSyAcnF_4nDqKp5bkFr7VYfE-n5anAnZDYIE&libraries=geometry&callback=initMap";
-const googleMapsApiBaseUrl = 'https://maps.googleapis.com/maps/api/js';  
-
-const loadGoogleMapsScript = (callback) => {
-  const script = document.createElement('script');
-  script.src = `${googleMapsApiBaseUrl}?key=${googleMapsApiKey}&libraries=geometry&callback=${callback}`;
-  script.async = true;
-  script.defer = true;
-  document.head.appendChild(script);
-};
 
 const WelcomeMark = () => {
   const [markers, setMarkers] = useState([]);
   const [waypoints, setWaypoints] = useState({});
   const [isFullScreen, setIsFullScreen] = useState(false);
   const mapRef = useRef(null);
-
-  
 
   const onMapClick = (event) => {
     const newMarker = {
@@ -41,7 +30,6 @@ const WelcomeMark = () => {
     setMarkers(current => [...current, newMarker]);
   };
 
-  
   useEffect(() => {
     // Update waypoints object whenever markers array changes
     const newWaypoints = markers.reduce((acc, marker) => {
@@ -75,8 +63,6 @@ const WelcomeMark = () => {
         .map((marker, index) => ({ ...marker, order: index + 1 })) // Reassign order to remaining markers
     );
   };
-
-
 
 
   return (

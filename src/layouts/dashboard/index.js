@@ -73,7 +73,7 @@ function Dashboard() {
 
   // In Dashboard component
 const fetchApiData = async (params) => {
-  const isoTimeStart = `${startDate}T${startTime}:00`;
+  //const isoTimeStart = `${startDate}T${startTime}:00`;
   const requestBody = {
     waypoints: waypoints.map(wp => ({ lat: wp.lat, lon: wp.lng })),
     iso_time_start: isoTimeStart,

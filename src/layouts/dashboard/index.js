@@ -266,9 +266,7 @@ const [chartData, setChartData] = useState([]);
                       barChartOptions={barChartOptionsDashboard}
                     />
                   </VuiBox>
-                  <VuiTypography variant="lg" color="white" fontWeight="bold" mb="5px">
-                    Compare Profiles
-                  </VuiTypography>
+                  
                   
                   <Grid container spacing="50px">
                     <Grid item xs={6} md={3} lg={3}>
@@ -288,9 +286,7 @@ const [chartData, setChartData] = useState([]);
                         </VuiBox>
                         
                       </Stack>
-                      <VuiTypography color="white" variant="lg" fontWeight="bold" mb="8px">
-                        32,984
-                      </VuiTypography>
+                     
                       <VuiProgress value={60} color="info" sx={{ background: "#2D2E5F" }} />
                     </Grid>
                     <Grid item xs={6} md={3} lg={3}>
@@ -308,13 +304,9 @@ const [chartData, setChartData] = useState([]);
                         >
                           <IoIosRocket color="#fff" size="12px" />
                         </VuiBox>
-                        <VuiTypography color="text" variant="button" fontWeight="medium">
-                          Clicks
-                        </VuiTypography>
+                      
                       </Stack>
-                      <VuiTypography color="white" variant="lg" fontWeight="bold" mb="8px">
-                        2,42M
-                      </VuiTypography>
+                     
                       <VuiProgress value={60} color="info" sx={{ background: "#2D2E5F" }} />
                     </Grid>
                     <Grid item xs={6} md={3} lg={3}>
@@ -332,13 +324,9 @@ const [chartData, setChartData] = useState([]);
                         >
                           <FaShoppingCart color="#fff" size="12px" />
                         </VuiBox>
-                        <VuiTypography color="text" variant="button" fontWeight="medium">
-                          Sales
-                        </VuiTypography>
+                       
                       </Stack>
-                      <VuiTypography color="white" variant="lg" fontWeight="bold" mb="8px">
-                        2,400$
-                      </VuiTypography>
+                      
                       <VuiProgress value={60} color="info" sx={{ background: "#2D2E5F" }} />
                     </Grid>
                     <Grid item xs={6} md={3} lg={3}>
@@ -356,13 +344,9 @@ const [chartData, setChartData] = useState([]);
                         >
                           <IoBuild color="#fff" size="12px" />
                         </VuiBox>
-                        <VuiTypography color="text" variant="button" fontWeight="medium">
-                          Items
-                        </VuiTypography>
+                        
                       </Stack>
-                      <VuiTypography color="white" variant="lg" fontWeight="bold" mb="8px">
-                        320
-                      </VuiTypography>
+                     
                       <VuiProgress value={60} color="info" sx={{ background: "#2D2E5F" }} />
                     </Grid>
                   </Grid>

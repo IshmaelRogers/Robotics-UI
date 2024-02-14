@@ -75,7 +75,7 @@ export default function data() {
         ),
         O2: (
           <VuiTypography variant="button" color="white" fontWeight="bold">
-            $14,000
+            340 mL/min
           </VuiTypography>
         ),
         BMI: (
@@ -106,7 +106,7 @@ export default function data() {
         ),
         O2: (
           <VuiTypography variant="button" color="white" fontWeight="bold">
-            $3,000
+            350 mL/min
           </VuiTypography>
         ),
         BMI: (
@@ -170,7 +170,7 @@ export default function data() {
         ),
         O2: (
           <VuiTypography variant="button" color="white" fontWeight="bold">
-            $20,500
+            240 mL/min
           </VuiTypography>
         ),
         BMI: (
@@ -198,7 +198,7 @@ export default function data() {
         ),
         O2: (
           <VuiTypography variant="button" color="white" fontWeight="bold">
-            $500
+            40 mL/min
           </VuiTypography>
         ),
         BMI: (
@@ -229,7 +229,7 @@ export default function data() {
         ),
         O2: (
           <VuiTypography variant="button" color="white" fontWeight="bold">
-            $2,000
+            450 mL/min
           </VuiTypography>
         ),
         BMI: (

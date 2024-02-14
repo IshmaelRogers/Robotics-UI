@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, TextField, Button, MenuItem, Select, InputLabel, FormControl } from '@mui/material';
 import VuiBox from 'components/VuiBox';
 import VuiTypography from 'components/VuiTypography';
@@ -7,12 +7,40 @@ import colors from 'assets/theme/base/colors';
 import linearGradient from 'assets/theme/functions/linearGradient';
 import CircularProgress from '@mui/material/CircularProgress';
 
-const SatisfactionRate = (props) => {
+const SatisfactionRate = (props ) => {
   const [startDate, setStartDate] = useState('');
   const [startTime, setStartTime] = useState('');
   const [swimSpeed, setSwimSpeed] = useState('');
   const [departureWindow, setDepartureWindow] = useState('');
   const [routeAlgorithm, setRouteAlgorithm] = useState('');
+  // Combined logic into one function
+  // Function to convert knots to meters per second
+  const knotsToMetersPerSecond = (knots) => {
+    return knots * 0.514444;
+  };
+  const handleFormSubmit = () => {
+    // Prepare the data in the desired format, ensure to convert strings to appropriate types
+	const isoTimeStart = `${startDate}T${startTime}:00`;
+	const swimSpeedInMetersPerSecond = knotsToMetersPerSecond(parseFloat(swimSpeed) || 0);
+    const params = {
+	  isoTimeStart,
+      swimSpeed: swimSpeedInMetersPerSecond, // Ensuring it's a number and handling NaN
+      departureWindowHours: parseInt(departureWindow, 10) || 0, // Ensuring it's an integer and handling NaN
+      routeAlgorithm,
+    };
+
+    console.log('Sending API request with:', params);
+
+    // Check if onSubmit prop function is provided and call it with params
+    if (props.onSubmit) {
+        props.onSubmit(params);
+    }
+  };
+
+  //useEffect(() => {
+	//console.log('Props received by SatisfactionRate:', props);
+ // }, [props.startDate, props.startTime, props.swimSpeed, props.departureWindow, props.routeAlgorithm]);
+  
 
   const handleAlgorithmChange = (event) => {
     setRouteAlgorithm(event.target.value);
@@ -20,36 +48,35 @@ const SatisfactionRate = (props) => {
 
   // Dummy function for demonstration
   const sendApiRequest = () => {
-	console.log({
 		
-			startDate: props.startDate,
-			startTime: props.startTime,
-			swimSpeed: props.swimSpeed,
-			departureWindow: props.departureWindow,
-			routeAlgorithm: props.routeAlgorithm
+		console.log('Sending API request with:', {
+			startDate,
+			startTime,
+			swimSpeed,
+			departureWindow,
+			routeAlgorithm,
 		});
 		if (props.onSubmit) {
 			props.onSubmit({
-				startDate: props.startDate,
-				startTime: props.startTime,
-				swimSpeed: props.swimSpeed,
-				departureWindow: props.departureWindow,
-				routeAlgorithm: props.routeAlgorithm
+			isoTimeStart: `${startDate}T${startTime}:00`,
+      		swimSpeed: parseFloat(swimSpeed),
+      		departureWindowHours: parseInt(departureWindow, 10),
+      		routeAlgorithm,
 			});
 		}
 	 // Assuming onSubmit is the prop function provided by Dashboard
   };
 
-  const handleSubmit = () => {
+  //const handleSubmit = () => {
 	// Assuming date is in the format 'YYYY-MM-DD' and time is in the format 'HH:MM'
-	const isoTimeStart = `${date}T${time}:00`; // Concatenate date and time to form the ISO string
+	//const isoTimeStart = `${date}T${time}:00`; // Concatenate date and time to form the ISO string
   
 	// Now you can pass isoTimeStart to your API request function
-	props.onSubmit({
-	  isoTimeStart: isoTimeStart,
+	//props.onSubmit({
+	 // isoTimeStart: isoTimeStart,
 	  // Include other parameters here as needed
-	});
-  };
+	//});
+  //};
 
   return (
     <Card sx={{ height: 'auto', padding: '20px' }}>
@@ -161,8 +188,8 @@ const SatisfactionRate = (props) => {
     <MenuItem value="location-unaware">Location-Unaware</MenuItem>
   </Select>
 </FormControl>
-		<Button variant="contained" color="primary" onClick={sendApiRequest} sx={{ mt: '20px' }}>
-          Execute Dive
+		<Button variant="contained" color="primary" onClick={handleFormSubmit} sx={{ mt: '20px' }}>
+		Submit Dive Parameters
         </Button>
       </VuiBox>
     </Card>

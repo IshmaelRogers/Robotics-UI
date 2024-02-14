@@ -19,6 +19,6 @@
 export const barChartDataDashboard = [
   {
     name: "Sales",
-    data: [300, 250, 110, 300, 490, 350, 270, 130, 425],
+    data: [500, 250, 110, 300, 490, 350, 270, 130, 425],
   },
 ];

@@ -20,7 +20,7 @@
 import Grid from "@mui/material/Grid";
 import Icon from "@mui/material/Icon";
 import { Card, LinearProgress, Stack } from "@mui/material";
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Component } from 'react';
 
 
 // Vision UI Dashboard React components
@@ -66,48 +66,105 @@ function Dashboard() {
   const { gradients } = colors;
   const { cardContent } = gradients;
   const [apiResults, setApiResults] = useState(null);
-  const [isoTimeStart, setIsoTimeStart] = useState('');
+  const [startDate, setStartDate] = useState('');
+  const [startTime, setStartTime] = useState('');
   const [swimSpeed, setSwimSpeed] = useState('');
   const [departureWindowHours, setDepartureWindowHours] = useState('');
   const [waypoints, setWaypoints] = useState([]);
+  const [diveParams, setDiveParams] = useState(null);
+  const [routeAlgorithm, setRouteAlgorithm] = useState('defaultAlgorithm');
+  // Existing state definitions
+const [userLocation, setUserLocation] = useState({ lat: '', lon: '' });
+const [loading, setLoading] = useState(true);
+const [chartData, setChartData] = useState([]);
+  
 
+  // Function to receive data from SatisfactionRate
+  const handleDiveParamsSubmit = (params) => {
+    // Update all necessary states with the received parameters
+  setStartDate(params.isoTimeStart.split('T')[0]);
+  setStartTime(params.isoTimeStart.split('T')[1].slice(0, -3)); // Assuming isoTimeStart is in the format 'YYYY-MM-DDTHH:MM:SS'
+  setSwimSpeed(params.swimSpeed);
+  setDepartureWindowHours(params.departureWindowHours);
+  setRouteAlgorithm(params.routeAlgorithm);
+  console.log("Received from SatisfactionRate:", params);
+    // Here you can also trigger the API call with these params
+  };
+  
+  const handleWaypointsChange = (updatedWaypoints) => {
+    setWaypoints(updatedWaypoints);
+    console.log(waypoints); // Here you can handle the waypoints, e.g., prepare them for an API call
+  };
   // In Dashboard component
-const fetchApiData = async (params) => {
-  //const isoTimeStart = `${startDate}T${startTime}:00`;
-  const requestBody = {
-    waypoints: waypoints.map(wp => ({ lat: wp.lat, lon: wp.lng })),
-    iso_time_start: isoTimeStart,
-    swim_speed: parseFloat(swimSpeed),
-    departure_window_hours: parseInt(departureWindowHours, 10),
-    route_algorithm: "current-aware",
-    ocean_model: "auto",
+  const fetchApiData = async () => {
+    setLoading(true); // Before the fetch call
+    const formattedIsoTimeStart = `${startDate}T${startTime}:00`;
+    const requestBody = {
+      waypoints: waypoints.map(wp => ({ lat: wp.lat, lon: wp.lng })),
+      iso_time_start: formattedIsoTimeStart,
+      swim_speed: parseFloat(swimSpeed),
+      departure_window_hours: parseInt(departureWindowHours, 10),
+      route_algorithm: routeAlgorithm,
+      ocean_model: "auto",
+    };
+
+    console.log('Sending API request with:', requestBody);
+
+    try {
+      const response = await fetch('http://api.current-lab.com:8000/currentroute', {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'X-API-Key': 'b0a47781a2be71469886ff1df8d24a0e',
+          'Content-Type': 'application/json',  
+        },
+        mode: 'cors',
+        body: JSON.stringify(requestBody),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      setApiResults(data);
+      console.log('API response data:', data);
+    } catch (error) {
+      console.error('Failed to fetch data:', error);
+    } finally {
+      setLoading(false); // Ensure loading is set to false after the fetch, regardless of the outcome
+    }
+    
+    
   };
 
-  try {
-    const response = await fetch('http://api.current-lab.com:8000/currentroute', {
-      method: 'POST', // or 'GET', depending on your API
-      headers: {
-        'Content-Type': 'application/json',
-        'X-API-Key': 'b0a47781a2be71469886ff1df8d24a0e'
-      },
-      body: JSON.stringify(params), // if POST request
-    });
-    if (!response.ok) {
-      throw new Error('Network response was not ok');
+  // Trigger fetchApiData when necessary states change
+  useEffect(() => {
+    if (startDate && startTime && !isNaN(swimSpeed) && !isNaN(departureWindowHours) && waypoints.length > 0) {
+      fetchApiData();
     }
-    const data = await response.json();
-    setApiResults(data);
-  } catch (error) {
-    console.error('Failed to fetch data:', error);
-  }
-};
+  }, [startDate, startTime, swimSpeed, departureWindowHours, waypoints]); 
 
   useEffect(() => {
-    // Placeholder for your API fetch call
-    fetchApiData().then(data => {
-      setApiResults(data); // Assume this is the data you want to share
-    });
-  }, []);
+    const fetchUserLocation = () => {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            setUserLocation({
+              lat: position.coords.latitude.toFixed(3),
+              lon: position.coords.longitude.toFixed(3),
+            });
+          },
+          (error) => {
+            console.error("Geolocation error:", error);
+          }
+        );
+      }
+    };
+  
+    fetchUserLocation();
+  }, []); // Empty dependency array means this effect runs once on mount
+  
 
 
   return (
@@ -135,7 +192,7 @@ const fetchApiData = async (params) => {
             <Grid item xs={12} md={6} xl={3}>
               <MiniStatisticsCard
                 title={{ text: "Geographics" }}
-                count="Lat 21.439 Lon 39.814"
+                count={`Lat ${userLocation.lat} Lon ${userLocation.lon}`}
                //percentage={{ color: "error", text: "-2%" }}
                 icon={{ color: "info", component: <IoDocumentText size="22px" color="white" /> }}
               />
@@ -154,17 +211,19 @@ const fetchApiData = async (params) => {
         <VuiBox mb={3}>
           <Grid container spacing="18px">
             <Grid item xs={12} lg={12} xl={5}>
-            <WelcomeMark setWaypoints={setWaypoints} />
+            <WelcomeMark onWaypointsChange={handleWaypointsChange} 
+            userPos={userLocation}/>
           </Grid>
           <Grid item xs={12} lg={6} xl={3}>
           <SatisfactionRate 
-            setIsoTimeStart={setIsoTimeStart} 
-            setSwimSpeed={setSwimSpeed} 
-            setDepartureWindowHours={setDepartureWindowHours}
+          onSubmit={handleDiveParamsSubmit}
+            //setSwimSpeed={setSwimSpeed} 
+            //setDepartureWindowHours={setDepartureWindowHours}
+            //setWaypoints={waypoints}
           />
           </Grid>
             <Grid item xs={12} lg={6} xl={4}>
-              <ReferralTracking apiData={apiResults} />
+              <ReferralTracking apiData={apiResults} loading={loading}  />
             </Grid>
           </Grid>
         </VuiBox>
@@ -175,16 +234,9 @@ const fetchApiData = async (params) => {
               <Card>
                 <VuiBox sx={{ height: "100%" }}>
                   <VuiTypography variant="lg" color="white" fontWeight="bold" mb="5px">
-                    Sales Overview
+                    Data Plotter
                   </VuiTypography>
-                  <VuiBox display="flex" alignItems="center" mb="40px">
-                    <VuiTypography variant="button" color="success" fontWeight="bold">
-                      +5% more{" "}
-                      <VuiTypography variant="button" color="text" fontWeight="regular">
-                        in 2021
-                      </VuiTypography>
-                    </VuiTypography>
-                  </VuiBox>
+                  
                   <VuiBox sx={{ height: "310px" }}>
                     <LineChart
                       lineChartData={lineChartDataDashboard}
@@ -215,16 +267,9 @@ const fetchApiData = async (params) => {
                     />
                   </VuiBox>
                   <VuiTypography variant="lg" color="white" fontWeight="bold" mb="5px">
-                    Active Users
+                    Compare Profiles
                   </VuiTypography>
-                  <VuiBox display="flex" alignItems="center" mb="40px">
-                    <VuiTypography variant="button" color="success" fontWeight="bold">
-                      (+23){" "}
-                      <VuiTypography variant="button" color="text" fontWeight="regular">
-                        than last week
-                      </VuiTypography>
-                    </VuiTypography>
-                  </VuiBox>
+                  
                   <Grid container spacing="50px">
                     <Grid item xs={6} md={3} lg={3}>
                       <Stack
@@ -241,9 +286,7 @@ const fetchApiData = async (params) => {
                         >
                           <IoWallet color="#fff" size="12px" />
                         </VuiBox>
-                        <VuiTypography color="text" variant="button" fontWeight="medium">
-                          Users
-                        </VuiTypography>
+                        
                       </Stack>
                       <VuiTypography color="white" variant="lg" fontWeight="bold" mb="8px">
                         32,984

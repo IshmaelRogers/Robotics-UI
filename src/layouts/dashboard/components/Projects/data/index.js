@@ -47,23 +47,23 @@ export default function data() {
 
   return {
     columns: [
-      { name: "companies", align: "left" },
-      { name: "members", align: "left" },
-      { name: "budget", align: "center" },
-      { name: "completion", align: "center" },
+      { name: "Divers", align: "left" },
+      { name: "Rank", align: "left" },
+      { name: "O2", align: "center" },
+      { name: "BMI", align: "center" },
     ],
 
     rows: [
       {
-        companies: (
+        Divers: (
           <VuiBox display="flex" alignItems="center">
             <AdobeXD size="20px" />
             <VuiTypography pl="16px" color="white" variant="button" fontWeight="medium">
-              Chakra Vision UI Version
+              Castel, Martin
             </VuiTypography>
           </VuiBox>
         ),
-        members: (
+        Rank: (
           <VuiBox display="flex" py={1}>
             {avatars([
               [avatar1, "Ryan Tompson"],
@@ -73,12 +73,12 @@ export default function data() {
             ])}
           </VuiBox>
         ),
-        budget: (
+        O2: (
           <VuiTypography variant="button" color="white" fontWeight="bold">
             $14,000
           </VuiTypography>
         ),
-        completion: (
+        BMI: (
           <VuiBox width="8rem" textAlign="left">
             <VuiTypography color="white" variant="button" fontWeight="bold">
               60%
@@ -88,15 +88,15 @@ export default function data() {
         ),
       },
       {
-        companies: (
+        Divers: (
           <VuiBox display="flex" alignItems="center">
             <Atlassian size="20px" />
             <VuiTypography pl="16px" color="white" variant="button" fontWeight="medium">
-              Add Progress Track
+              Foster, Jane
             </VuiTypography>
           </VuiBox>
         ),
-        members: (
+        Rank: (
           <VuiBox display="flex" py={1}>
             {avatars([
               [avatar2, "Romina Hadid"],
@@ -104,12 +104,12 @@ export default function data() {
             ])}
           </VuiBox>
         ),
-        budget: (
+        O2: (
           <VuiTypography variant="button" color="white" fontWeight="bold">
             $3,000
           </VuiTypography>
         ),
-        completion: (
+        BMI: (
           <VuiBox width="8rem" textAlign="left">
             <VuiTypography color="white" variant="button" fontWeight="bold">
               10%
@@ -119,15 +119,15 @@ export default function data() {
         ),
       },
       {
-        companies: (
+        Divers: (
           <VuiBox display="flex" alignItems="center">
             <Slack size="20px" />
             <VuiTypography pl="16px" color="white" variant="button" fontWeight="medium">
-              Fix Platform Errors
+              Stark, Tony
             </VuiTypography>
           </VuiBox>
         ),
-        members: (
+        Rank: (
           <VuiBox display="flex" py={1}>
             {avatars([
               [avatar1, "Ryan Tompson"],
@@ -135,12 +135,12 @@ export default function data() {
             ])}
           </VuiBox>
         ),
-        budget: (
+        O2: (
           <VuiTypography variant="button" color="white" fontWeight="bold">
             Not set
           </VuiTypography>
         ),
-        completion: (
+        BMI: (
           <VuiBox width="8rem" textAlign="left">
             <VuiTypography color="white" variant="button" fontWeight="bold">
               100%
@@ -150,15 +150,15 @@ export default function data() {
         ),
       },
       {
-        companies: (
+        Divers: (
           <VuiBox display="flex" alignItems="center">
             <Spotify size="20px" />
             <VuiTypography pl="16px" color="white" variant="button" fontWeight="medium">
-              Launch our Mobile App
+              Maximoff, Wanda
             </VuiTypography>
           </VuiBox>
         ),
-        members: (
+        Rank: (
           <VuiBox display="flex" py={1}>
             {avatars([
               [avatar4, "Jessica Doe"],
@@ -168,12 +168,12 @@ export default function data() {
             ])}
           </VuiBox>
         ),
-        budget: (
+        O2: (
           <VuiTypography variant="button" color="white" fontWeight="bold">
             $20,500
           </VuiTypography>
         ),
-        completion: (
+        BMI: (
           <VuiBox width="8rem" textAlign="left">
             <VuiTypography color="white" variant="button" fontWeight="bold">
               100%
@@ -183,25 +183,25 @@ export default function data() {
         ),
       },
       {
-        companies: (
+        Divers: (
           <VuiBox display="flex" alignItems="center">
             <Jira size="20px" />
             <VuiTypography pl="16px" color="white" variant="button" fontWeight="medium">
-              Add the New Pricing Page
+              Jane, Mary
             </VuiTypography>
           </VuiBox>
         ),
-        members: (
+        Rank: (
           <VuiBox display="flex" py={1}>
             {avatars([[avatar4, "Jessica Doe"]])}
           </VuiBox>
         ),
-        budget: (
+        O2: (
           <VuiTypography variant="button" color="white" fontWeight="bold">
             $500
           </VuiTypography>
         ),
-        completion: (
+        BMI: (
           <VuiBox width="8rem" textAlign="left">
             <VuiTypography color="white" variant="button" fontWeight="bold">
               25%
@@ -211,15 +211,15 @@ export default function data() {
         ),
       },
       {
-        companies: (
+        Divers: (
           <VuiBox display="flex" alignItems="center">
             <Invision size="20px" />
             <VuiTypography pl="16px" color="white" variant="button" fontWeight="medium">
-              Redesign New Online Shop
+              Doe, John
             </VuiTypography>
           </VuiBox>
         ),
-        members: (
+        Rank: (
           <VuiBox display="flex" py={1}>
             {avatars([
               [avatar1, "Ryan Tompson"],
@@ -227,12 +227,12 @@ export default function data() {
             ])}
           </VuiBox>
         ),
-        budget: (
+        O2: (
           <VuiTypography variant="button" color="white" fontWeight="bold">
             $2,000
           </VuiTypography>
         ),
-        completion: (
+        BMI: (
           <VuiBox width="8rem" textAlign="left">
             <VuiTypography color="white" variant="button" fontWeight="bold">
               40%
